@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Calendar (DatePicker)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-datetimepicker.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/css/jquery-ui.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/css/jquery-ui.structure.min.css') }}" />
+</head>
+<body style="margin:40px;">
+  <h1 class="page-header">Test DatePicker</h1>
+  <div class="container">
+    <div class="row">
+	  <div class="col-xs-12">
+		  <h2>DatePicker #1</h2>
+		  <div class="form-group">
+			<div class="input-group date" id="datepicker1">
+			  <input type="text" class="form-control" />
+			  <span class="input-group-addon">
+				<span class="glyphicon-calendar glyphicon"></span>
+			  </span>
+			</div>
+		  </div>
+          <h2>DatePicker #2</h2>
+		  <input type="text" class="form-control" id="datepicker2">
+	  </div>
+	</div>
+  </div>
+  <script src="{{ url_for('static', filename='bootstrap/js/jquery-3.2.1.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/moment-with-locales.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='bootstrap/js/bootstrap-datetimepicker.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='jquery-ui/js/jquery-ui.min.js') }}"></script>
+  <style>
+      #ui-datepicker-div {
+          background: beige;
+          border: 2px solid black;
+          z-index: 100;
+      }
+  </style>
+  <script type="text/javascript">
+    $(function () {
+      $('#datepicker1').datetimepicker({
+	    locale: 'ru',
+		stepping: 10,
+		format: 'DD.MM.YYYY',
+		daysOfWeekDisabled:[]
+	  });
+	  $.datepicker.regional['ru'] = {
+		closeText: 'Закрыть',
+		prevText: '&#x3c;Пред',
+		nextText: 'След&#x3e;',
+		currentText: 'Сегодня',
+		monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
+		'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+		monthNamesShort: ['янв.', 'февр.', 'марта', 'апр.', 'мая', 'июня', 'июля', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'],
+		dayNames: ['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'],
+		dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+		dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+		weekHeader: 'Не',
+		dateFormat: 'dd.mm.yy',
+		firstDay: 1,
+		isRTL: false,
+		showMonthAfterYear: false,
+		yearSuffix: ''};
+	  $.datepicker.setDefaults($.datepicker.regional['ru']);
+	  $( "#datepicker2" ).datepicker({
+	    format: 'DD.MM.YYYY',
+	  });
+
+    });
+  </script>
+
+
+</body>
+</html>

@@ -3,6 +3,6 @@ class NoDateCanBeSelected(Exception):
     pass
 
 
-class NotFoundMouthYear(Exception):
-    """Не удалось определить месяц"""
+class NotFoundCalendar(Exception):
+    """Не удалось найти календарь."""
     pass

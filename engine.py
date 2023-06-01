@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 import config
-from exceptions import NoDateCanBeSelected, NotFoundMouthYear
+from exceptions import NoDateCanBeSelected, NotFoundCalendar
 
 
 class Calendar:
@@ -107,6 +107,20 @@ class Calendar:
             return None
         return element
 
+    def get_current_position(self, mouth_element: Optional[WebElement], year_element: Optional[WebElement],
+                             mouth_and_year: Optional[WebElement] = None) -> Tuple[int, int]:
+        """Возвращает текущий выбранный месяц и год."""
+
+        if mouth_and_year:
+            mouth_name, year_select = mouth_and_year.text.split(self.delimiter)
+            mouth_select = self.mouth_name[self._lang][mouth_name.lower()]
+            return mouth_select, int(year_select)
+
+        m = mouth_element.text.lower().replace(',', '')
+        mouth_select = self.mouth_name[self._lang][m]
+        year_select = int(year_element.text)
+        return mouth_select, year_select
+
     def find_cursor(self, mouth: int, year: int) -> Optional[int]:
         """Сравнивает текущий месяц и год с заданными значениями.
 
@@ -114,32 +128,21 @@ class Calendar:
         :param year: год, который нужно выбрать
         :return:
         """
-        if not self._mouth_and_year_locators:
-            mouths = self.get_elements_timeout(*self._mouth_locators)
-            years = self.get_elements_timeout(*self._year_locators)
-            for i in range(0, len(mouths)):
-                m = mouths[i].text.lower().replace(',', '')
-                mouth_select = self.mouth_name[self._lang][m]
-                year_select = int(years[i].text)
-                if mouth_select == mouth and year_select == year:
-                    return i
-        else:
-            value = None
-            for attempt in range(0, 5):
-                value = self.get_element_timeout(*self._mouth_and_year_locators)
-                if value:
-                    break
-                time.sleep(1)
 
-            if not value:
-                raise NotFoundMouthYear("Не удалось получить текущий месяц и год. За 5 попыток.")
-
-            mouth_name, year_select = value.text.split(self.delimiter)
-            mouth_select = self.mouth_name[self._lang][mouth_name.lower()]
+        if self._mouth_and_year_locators:
+            mouth_and_year = self.get_element_timeout(*self._mouth_and_year_locators)
+            mouth_select, year_select = self.get_current_position(mouth_element=None, year_element=None,
+                                                                  mouth_and_year=mouth_and_year)
             if mouth_select == mouth and int(year_select) == year:
-                return 0
-        return None
-        # raise NotFoundMouthYear("Не удалось получить текущий месяц и год.")
+                return True
+        else:
+            mouth = self.get_element_timeout(*self._mouth_locators)
+            year = self.get_element_timeout(*self._year_locators)
+            mouth_select, year_select = self.get_current_position(mouth_element=mouth, year_element=year)
+            if mouth_select == mouth and year_select == year:
+                return True
+
+        return False
 
     def next_click(self):
         """Выполняет нажатие по кнопке Следующий."""
@@ -162,28 +165,26 @@ class Calendar:
         field.click()
 
         day, mouth, year = date.split('.')
-        cursor_calendar = self.find_cursor(int(mouth), int(year))
-
-        if cursor_calendar is None:
-            find = True
-            while find:
-                if not self._mouth_and_year_locators:
-                    mouths = self.get_elements_timeout(*self._mouth_locators)
-                    years = self.get_elements_timeout(*self._year_locators)
-
-                    mouth_select = self.mouth_name[self._lang][mouths[0].text.lower().replace(',', '')]
-                    year_select = int(years[0].text)
+        calendar_element = self.get_element_timeout(*self._calendar_locators)
+        if calendar_element:
+            find = self.find_cursor(int(mouth), int(year))
+            while not find:
+                # Определение текущего положения
+                if self._mouth_and_year_locators:
+                    mouth_and_year = self.get_element_timeout(*self._mouth_and_year_locators)
+                    mouth_select, year_select = self.get_current_position(mouth_element=None,
+                                                                          year_element=None,
+                                                                          mouth_and_year=mouth_and_year)
                 else:
-                    title = self.get_element_timeout(*self._mouth_and_year_locators).text
-                    mouth_name, year_select = title.split(self.delimiter)
-                    mouth_select = self.mouth_name[self._lang][mouth_name.lower().replace(self.delimiter, '')]
-                    year_select = int(year_select)
+                    mouth_element = self.get_element_timeout(*self._mouth_locators)
+                    year_element = self.get_element_timeout(*self._year_locators)
+                    mouth_select, year_select = self.get_current_position(mouth_element=mouth_element,
+                                                                          year_element=year_element)
 
                 if year_select == int(year):
                     if mouth_select > int(mouth):
                         self.back_click()
                     elif mouth_select == int(mouth):
-                        cursor_calendar = 0
                         break
                     else:
                         self.next_click()
@@ -191,14 +192,14 @@ class Calendar:
                     self.back_click()
                 else:
                     self.next_click()
-                cursor_calendar = self.find_cursor(int(mouth), int(year))
-                find = False if cursor_calendar else True
-        calendars = self.get_elements_timeout(*self._calendar_locators)
-        days = calendars[cursor_calendar].find_elements(*self._day_locators)
 
-        for d in days:
-            if d.text.strip():
-                if int(d.text) == int(day):
-                    d.click()
-                    return
-        raise NoDateCanBeSelected(f"Не могу выбрать дату {date}")
+                find = self.find_cursor(int(mouth), int(year))
+
+            days = self.browser.find_elements(*self._day_locators)
+            for d in days:
+                if d.text.strip():
+                    if int(d.text) == int(day):
+                        d.click()
+                        return
+            raise NoDateCanBeSelected(f"Не могу выбрать дату {date}")
+        raise NotFoundCalendar(f"Не удалось обнаружить календарь. Проверьте локаторы или увеличьте таймаут.")

@@ -108,7 +108,7 @@ class Calendar:
         return element
 
     def find_cursor(self, mouth: int, year: int) -> Optional[int]:
-        """Поиск
+        """Сравнивает текущий месяц и год с заданными значениями.
 
         :param mouth: месяц, который нужно выбрать
         :param year: год, который нужно выбрать

@@ -116,12 +116,12 @@ class Calendar:
             mouth_select = self.mouth_name[self._lang][mouth_name.lower()]
             return mouth_select, int(year_select)
 
-        m = mouth_element.text.lower().replace(',', '')
+        m = mouth_element.text.lower()
         mouth_select = self.mouth_name[self._lang][m]
         year_select = int(year_element.text)
         return mouth_select, year_select
 
-    def find_cursor(self, mouth: int, year: int) -> Optional[int]:
+    def find_cursor(self, mouth: int, year: int) -> bool:
         """Сравнивает текущий месяц и год с заданными значениями.
 
         :param mouth: месяц, который нужно выбрать
@@ -202,4 +202,4 @@ class Calendar:
                         d.click()
                         return
             raise NoDateCanBeSelected(f"Не могу выбрать дату {date}")
-        raise NotFoundCalendar(f"Не удалось обнаружить календарь. Проверьте локаторы или увеличьте таймаут.")
+        raise NotFoundCalendar("Не удалось обнаружить календарь. Проверьте локаторы или увеличьте таймаут.")

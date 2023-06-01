@@ -62,12 +62,12 @@ flask --app app run
 
 Для Mac/Linux
 ```bash
-pytest
+pytest test.py
 ```
 
 Для Windows
 ````bash
-python -m pytest
+python -m pytest test.py
 ````
 
 ## Список тестов

@@ -30,7 +30,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar,
             day_locators=locators.day_locators,
             browser=self.driver,
-            mouth_and_year_locators=locators.mouth_and_year_locators,
+            month_and_year_locators=locators.month_and_year_locators,
             delimiter=' ',
         )
 
@@ -45,7 +45,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar2,
             day_locators=locators.day_locators2,
             browser=self.driver,
-            mouth_locators=locators.mouth_locators,
+            month_locators=locators.month_locators,
             year_locators=locators.year_locators
         )
 
@@ -63,7 +63,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar,
             day_locators=locators.day_locators,
             browser=self.driver,
-            mouth_and_year_locators=locators.mouth_and_year_locators,
+            month_and_year_locators=locators.month_and_year_locators,
             delimiter=' ',
         )
 
@@ -78,7 +78,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar2,
             day_locators=locators.day_locators2,
             browser=self.driver,
-            mouth_locators=locators.mouth_locators,
+            month_locators=locators.month_locators,
             year_locators=locators.year_locators
         )
 
@@ -96,7 +96,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar,
             day_locators=locators.day_locators,
             browser=self.driver,
-            mouth_and_year_locators=locators.mouth_and_year_locators,
+            month_and_year_locators=locators.month_and_year_locators,
             delimiter=' ',
         )
 
@@ -111,7 +111,7 @@ class TestCalendar(unittest.TestCase):
             calendar_locators=locators.calendar2,
             day_locators=locators.day_locators2,
             browser=self.driver,
-            mouth_locators=locators.mouth_locators,
+            month_locators=locators.month_locators,
             year_locators=locators.year_locators
         )
 

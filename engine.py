@@ -18,12 +18,12 @@ class Calendar:
     _back_button_locators = None
     _next_button_locators = None
     _day_locators = None
-    _mouth_locators = None
+    _month_locators = None
     _year_locators = None
-    _mouth_and_year_locators = None
+    _month_and_year_locators = None
     _lang = None
 
-    mouth_name = {
+    month_name = {
         'ru': {
             'январь': 1,
             'февраль': 2,
@@ -47,9 +47,9 @@ class Calendar:
                  calendar_locators: Tuple[str, str],
                  day_locators: Tuple[str, str],
                  browser: WebDriver,
-                 mouth_locators: Optional[Tuple[str, str]] = None,
+                 month_locators: Optional[Tuple[str, str]] = None,
                  year_locators: Optional[Tuple[str, str]] = None,
-                 mouth_and_year_locators: Optional[Tuple[str, str]] = None,
+                 month_and_year_locators: Optional[Tuple[str, str]] = None,
                  lang='ru',
                  delimiter=','
                  ):
@@ -58,9 +58,9 @@ class Calendar:
         self._next_button_locators = next_button_locators
         self._calendar_locators = calendar_locators
         self._day_locators = day_locators
-        self._mouth_locators = mouth_locators
+        self._month_locators = month_locators
         self._year_locators = year_locators
-        self._mouth_and_year_locators = mouth_and_year_locators
+        self._month_and_year_locators = month_and_year_locators
         self._lang = lang
         self.browser = browser
         self.delimiter = delimiter
@@ -107,39 +107,39 @@ class Calendar:
             return None
         return element
 
-    def get_current_position(self, mouth_element: Optional[WebElement], year_element: Optional[WebElement],
-                             mouth_and_year: Optional[WebElement] = None) -> Tuple[int, int]:
+    def get_current_position(self, month_element: Optional[WebElement], year_element: Optional[WebElement],
+                             month_and_year: Optional[WebElement] = None) -> Tuple[int, int]:
         """Возвращает текущий выбранный месяц и год."""
 
-        if mouth_and_year:
-            mouth_name, year_select = mouth_and_year.text.split(self.delimiter)
-            mouth_select = self.mouth_name[self._lang][mouth_name.lower()]
-            return mouth_select, int(year_select)
+        if month_and_year:
+            month_name, year_select = month_and_year.text.split(self.delimiter)
+            month_select = self.month_name[self._lang][month_name.lower()]
+            return month_select, int(year_select)
 
-        m = mouth_element.text.lower()
-        mouth_select = self.mouth_name[self._lang][m]
+        m = month_element.text.lower()
+        month_select = self.month_name[self._lang][m]
         year_select = int(year_element.text)
-        return mouth_select, year_select
+        return month_select, year_select
 
-    def find_cursor(self, mouth: int, year: int) -> bool:
+    def find_cursor(self, month: int, year: int) -> bool:
         """Сравнивает текущий месяц и год с заданными значениями.
 
-        :param mouth: месяц, который нужно выбрать
+        :param month: месяц, который нужно выбрать
         :param year: год, который нужно выбрать
         :return:
         """
 
-        if self._mouth_and_year_locators:
-            mouth_and_year = self.get_element_timeout(*self._mouth_and_year_locators)
-            mouth_select, year_select = self.get_current_position(mouth_element=None, year_element=None,
-                                                                  mouth_and_year=mouth_and_year)
-            if mouth_select == mouth and int(year_select) == year:
+        if self._month_and_year_locators:
+            month_and_year = self.get_element_timeout(*self._month_and_year_locators)
+            month_select, year_select = self.get_current_position(month_element=None, year_element=None,
+                                                                  month_and_year=month_and_year)
+            if month_select == month and int(year_select) == year:
                 return True
         else:
-            mouth = self.get_element_timeout(*self._mouth_locators)
+            month = self.get_element_timeout(*self._month_locators)
             year = self.get_element_timeout(*self._year_locators)
-            mouth_select, year_select = self.get_current_position(mouth_element=mouth, year_element=year)
-            if mouth_select == mouth and year_select == year:
+            month_select, year_select = self.get_current_position(month_element=month, year_element=year)
+            if month_select == month and year_select == year:
                 return True
 
         return False
@@ -164,27 +164,27 @@ class Calendar:
         field = self.get_element_clickable_and_timeout(*self._input)
         field.click()
 
-        day, mouth, year = date.split('.')
+        day, month, year = date.split('.')
         calendar_element = self.get_element_timeout(*self._calendar_locators)
         if calendar_element:
-            find = self.find_cursor(int(mouth), int(year))
+            find = self.find_cursor(int(month), int(year))
             while not find:
                 # Определение текущего положения
-                if self._mouth_and_year_locators:
-                    mouth_and_year = self.get_element_timeout(*self._mouth_and_year_locators)
-                    mouth_select, year_select = self.get_current_position(mouth_element=None,
+                if self._month_and_year_locators:
+                    month_and_year = self.get_element_timeout(*self._month_and_year_locators)
+                    month_select, year_select = self.get_current_position(month_element=None,
                                                                           year_element=None,
-                                                                          mouth_and_year=mouth_and_year)
+                                                                          month_and_year=month_and_year)
                 else:
-                    mouth_element = self.get_element_timeout(*self._mouth_locators)
+                    month_element = self.get_element_timeout(*self._month_locators)
                     year_element = self.get_element_timeout(*self._year_locators)
-                    mouth_select, year_select = self.get_current_position(mouth_element=mouth_element,
+                    month_select, year_select = self.get_current_position(month_element=month_element,
                                                                           year_element=year_element)
 
                 if year_select == int(year):
-                    if mouth_select > int(mouth):
+                    if month_select > int(month):
                         self.back_click()
-                    elif mouth_select == int(mouth):
+                    elif month_select == int(month):
                         break
                     else:
                         self.next_click()
@@ -193,7 +193,7 @@ class Calendar:
                 else:
                     self.next_click()
 
-                find = self.find_cursor(int(mouth), int(year))
+                find = self.find_cursor(int(month), int(year))
 
             days = self.browser.find_elements(*self._day_locators)
             for d in days:

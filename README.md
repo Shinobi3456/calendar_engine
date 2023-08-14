@@ -1,3 +1,4 @@
+![selenium.jpg](static%2Fselenium.jpg)
 # Selenium. Автоматизация тестирования календаря (Datepicker)
 
 Этот репозиторий содержит примеры кода для автоматизации тестирования календаря с помощью Selenium WebDriver.
